@@ -1,0 +1,13 @@
+*.png
+*.jpeg
+*.jpg
+*.t7
+*.csv
+*.tsv
+*.npy
+*.pyc
+*.DS_Store
+dac-noise/results
+dac-noise/data
+dac-noise/imgs
+dac-noise/checkpoint
