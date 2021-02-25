@@ -694,6 +694,8 @@ def test(epoch):
 				        'net':net,
 				        'acc':acc,
 				        'epoch':epoch,
+						'val_f1': np.mean(batch_f1score),
+						'val_f1_pruned': np.mean(batch_f1score_without_abstained)
 				}
 #				if not os.path.isdir('checkpoint'):
 #				    os.mkdir('checkpoint')

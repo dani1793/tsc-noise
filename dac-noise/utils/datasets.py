@@ -213,9 +213,10 @@ def get_data(args,):
 		#series_length = 24
 
         
-		trainset = ucr_archive.UCRArchive(args.datadir, 'Crop', iteration= args.iteration, datasetType = 'TRAIN', noise = args.noise_percentage, transform=None)
+		trainset = ucr_archive.UCRArchiveNoisyVal(args.datadir, 'Crop', iteration= args.iteration, datasetType = 'TRAIN', noise = args.noise_percentage, transform=None)
 		# testset = ucr_archive.UCRArchive(args.datadir, 'Crop', datasetType = 'VAL', noise = args.noise_percentage, transform=None) Validation set is always non noisy      
-		testset = ucr_archive.UCRArchive(args.datadir, 'Crop', iteration= args.iteration, datasetType = 'VAL', noise = 0, transform=None)
+		# testset = ucr_archive.UCRArchive(args.datadir, 'Crop', iteration= args.iteration, datasetType = 'VAL', noise = , transform=None)
+		testset = ucr_archive.UCRArchiveNoisyVal(args.datadir, 'Crop', iteration= args.iteration, datasetType = 'VAL', noise = args.noise_percentage, transform=None)
 
 		num_classes = 24 
 		series_length = 46

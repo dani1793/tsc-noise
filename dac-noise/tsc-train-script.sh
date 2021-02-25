@@ -57,6 +57,7 @@ python3 tsc-train.py --datadir data/UCRArchive_2018 --dataset ucr-archive --nest
 python3 tsc-train.py --datadir data/UCRArchive_2018 --dataset ucr-archive --nesterov --net_type tsc-lstm --depth 2 --epochs 1500 --batch_size 128 --test_batch_size 128 --save_best_model --seed 0 --expt_name 2-lstm-crop-noise-0-epoch-1500-no-dac-lr-0.001_pow_0.2_550_750_950_1200_1500 --noise_percentage 0 --lr 0.001 --output_path results/crop/
 
 # Crop LSTM with noise
+
 python3 tsc-train.py --datadir data/UCRArchive_2018 --dataset ucr-archive --nesterov --net_type tsc-lstm --depth 2 --epochs 3000 --batch_size 128 --test_batch_size 128 --save_best_model --seed 0 --expt_name 2-lstm-crop-noise-0.3-epoch-3000-dac-learning-epoch-800-lr-0.001_pow_0.2_550_750_950_1200_1500_1700_1900 --loss_fn dac_loss --noise_percentage 0.3 --lr 0.001 --learn_epochs 800 --output_path results/crop/
 python3 tsc-train.py --datadir data/UCRArchive_2018 --dataset ucr-archive --nesterov --net_type tsc-lstm --depth 2 --epochs 1500 --batch_size 128 --test_batch_size 128 --save_best_model --seed 0 --expt_name 2-lstm-crop-noise-0.3-epoch-1500-dac-learning-epoch-800-lr-0.001 --loss_fn dac_loss --noise_percentage 0.3 --lr 0.001 --learn_epochs 800 --output_path results/crop/
 python3 tsc-train.py --datadir data/UCRArchive_2018 --dataset ucr-archive --nesterov --net_type tsc-lstm --depth 2 --epochs 1500 --batch_size 128 --test_batch_size 128 --save_best_model --seed 0 --expt_name 2-lstm-crop-noise-0.3-epoch-1500-dac-learning-epoch-800-lr-0.001 --loss_fn dac_loss --noise_percentage 0.5 --lr 0.001 --learn_epochs 800 --output_path results/crop/
@@ -88,6 +89,11 @@ python3 tsc-train.py --datadir data/UCRArchive_2018 --dataset ucr-archive --nest
 python3 tsc-train.py --datadir data/UCRArchive_2018 --dataset ucr-archive --nesterov --net_type tsc-lstm --depth 2 --epochs 5000 --batch_size 128 --test_batch_size 128 --save_best_model --seed 0 --expt_name 2-lstm-crop-noise-0.3-epoch-5000-dac-learning-epoch-40-lr-0.001-iter3 --iteration 3 --loss_fn dac_loss --noise_percentage 0.3 --lr 0.001 --learn_epochs 40 --output_path results/crop/
 python3 tsc-train.py --datadir data/UCRArchive_2018 --dataset ucr-archive --nesterov --net_type tsc-lstm --depth 2 --epochs 5000 --batch_size 128 --test_batch_size 128 --save_best_model --seed 0 --expt_name 2-lstm-crop-noise-0.3-epoch-5000-dac-learning-epoch-40-lr-0.001-iter4 --iteration 4 --loss_fn dac_loss --noise_percentage 0.3 --lr 0.001 --learn_epochs 40 --output_path results/crop/
 python3 tsc-train.py --datadir data/UCRArchive_2018 --dataset ucr-archive --nesterov --net_type tsc-lstm --depth 2 --epochs 5000 --batch_size 128 --test_batch_size 128 --save_best_model --seed 0 --expt_name 2-lstm-crop-noise-0.3-epoch-5000-dac-learning-epoch-40-lr-0.001-iter5 --iteration 5 --loss_fn dac_loss --noise_percentage 0.3 --lr 0.001 --learn_epochs 40 --output_path results/crop/
+
+# with noisy validation set
+python3 tsc-train.py --datadir data/UCRArchive_2018 --dataset ucr-archive --nesterov --net_type tsc-lstm --depth 2 --epochs 5000 --batch_size 128 --test_batch_size 128 --save_best_model --no_overwrite --seed 0 --expt_name 2-lstm-crop-noise-0.3-epoch-5000-dac-learning-epoch-40-lr-0.001-noisy_val-iter1 --iteration 1 --loss_fn dac_loss --noise_percentage 0.3 --lr 0.001 --learn_epochs 40 --output_path results/crop/
+
+
 #iter-1 0.5
 python3 tsc-train.py --datadir data/UCRArchive_2018 --dataset ucr-archive --nesterov --net_type tsc-lstm --depth 2 --epochs 5000 --batch_size 128 --test_batch_size 128 --save_best_model --seed 0 --expt_name 2-lstm-crop-noise-0.5-epoch-5000-dac-learning-epoch-100-lr-0.001-iter1 --iteration 1 --loss_fn dac_loss --noise_percentage 0.5 --lr 0.001 --learn_epochs 100 --output_path results/crop/
 python3 tsc-train.py --datadir data/UCRArchive_2018 --dataset ucr-archive --nesterov --net_type tsc-lstm --depth 2 --epochs 5000 --batch_size 128 --test_batch_size 128 --save_best_model --seed 0 --expt_name 2-lstm-crop-noise-0.5-epoch-5000-dac-learning-epoch-100-lr-0.001-iter2 --iteration 2 --loss_fn dac_loss --noise_percentage 0.5 --lr 0.001 --learn_epochs 100 --output_path results/crop/
@@ -130,6 +136,9 @@ python3 tsc-train.py --datadir data/UCRArchive_2018 --dataset ucr-archive --nest
 python3 tsc-train.py --datadir data/UCRArchive_2018 --dataset ucr-archive --nesterov --net_type inception_simple --depth 2 --epochs 300 --batch_size 64 --test_batch_size 64 --save_best_model --seed 0 --expt_name inception-simple-crop-noise-0.3-epoch-300-dac-learning-epoch-5-lr-0.001-iter3 --iteration 3  --loss_fn dac_loss --noise_percentage 0.3  --lr 0.001 --learn_epochs 5 --output_path results/crop/
 python3 tsc-train.py --datadir data/UCRArchive_2018 --dataset ucr-archive --nesterov --net_type inception_simple --depth 2 --epochs 300 --batch_size 64 --test_batch_size 64 --save_best_model --seed 0 --expt_name inception-simple-crop-noise-0.3-epoch-300-dac-learning-epoch-5-lr-0.001-iter4 --iteration 4  --loss_fn dac_loss --noise_percentage 0.3  --lr 0.001 --learn_epochs 5 --output_path results/crop/
 python3 tsc-train.py --datadir data/UCRArchive_2018 --dataset ucr-archive --nesterov --net_type inception_simple --depth 2 --epochs 300 --batch_size 64 --test_batch_size 64 --save_best_model --seed 0 --expt_name inception-simple-crop-noise-0.3-epoch-300-dac-learning-epoch-5-lr-0.001-iter5 --iteration 5  --loss_fn dac_loss --noise_percentage 0.3  --lr 0.001 --learn_epochs 5 --output_path results/crop/
+
+
+
 
 # iter-0.5
 python3 tsc-train.py --datadir data/UCRArchive_2018 --dataset ucr-archive --nesterov --net_type inception_simple --depth 2 --epochs 300 --batch_size 64 --test_batch_size 64 --save_best_model --seed 0 --expt_name inception-simple-crop-noise-0.5-epoch-300-dac-learning-epoch-10-lr-0.001-iter1 --iteration 1 --loss_fn dac_loss --noise_percentage 0.5  --lr 0.1 --learn_epochs 50 --output_path results/crop/
