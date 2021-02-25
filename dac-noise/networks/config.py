@@ -45,13 +45,13 @@ def learning_rate(init, epoch):
    if (epoch > 1900):
        optim_factor = 0 #4 #7
    elif (epoch > 1700):
-       optim_factor = 0 #3 #6
+       optim_factor = 2 #3 #6
    elif (epoch > 1500):
        optim_factor = 0 #2 #5
    elif (epoch > 1200):
        optim_factor = 0 #1 #4
    elif (epoch > 950):
-       optim_factor = 0 #3        
+       optim_factor = 1 #3        
    elif (epoch > 750):
        optim_factor = 0 #2
    elif (epoch > 550):
