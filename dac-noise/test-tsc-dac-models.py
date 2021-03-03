@@ -26,7 +26,7 @@ parser.add_argument('--results_dir',  type=str, required=False, help='results di
 parser.add_argument('--exp_name',  type=str, required=False, help='experiment name (model would be fetched from this)')
 parser.add_argument('--iteration', default=0, type=int, help='iteration for noise dataset')
 parser.add_argument('--dataset', default='UCRArchive_2018', type=str, help='dataset = [ucr-archive / ai_crop]')
-parser.add_argument('--net_type', default='inception', type=str, help='[tsc-lstm / inception-simple]')
+parser.add_argument('--net_type', default='tsc-lstm', type=str, help='[tsc-lstm / inception-simple]')
 parser.add_argument('--loss_fn', default=True, type=bool, help='adds class for abstention')
 parser.add_argument('--checkpoint_path', default='', type=str, help='path to add model checkpoint from')
 parser.add_argument('--noise_percentage', default=0, type=float, help='noise percentage')
@@ -47,6 +47,8 @@ from torch.nn.modules.loss import _Loss
 from torch.autograd import Variable
 
 import os
+from os import listdir
+from os.path import isfile, join
 import sys
 import time
 import datetime
@@ -66,8 +68,8 @@ print('\n[Phase 1] : Data Preparation')
 trainset, testset, num_classes, series_length, train_sampler, valid_sampler = datasets.get_data(args)
 
 # get data for simple dataset
-#args.noise_percentage = 0
-#args.iteration = 0
+args.noise_percentage = 0
+args.iteration = 0
 trainset_no_noise, testset_no_noise, num_classes_no_noise, series_length_no_noise, train_sampler_no_noise, valid_sampler_no_noise = datasets.get_data(args)
 
 
@@ -98,11 +100,12 @@ def getNetwork(args):
 	return net.to(device), file_name
     
 
-def loadModel():
+def loadModel(savedModelPath):
+
     if torch.cuda.is_available():
-        checkpoint = torch.load(args.checkpoint_path)
+        checkpoint = torch.load(savedModelPath)
     else:
-        checkpoint = torch.load(args.checkpoint_path, map_location=torch.device('cpu'))
+        checkpoint = torch.load(savedModelPath, map_location=torch.device('cpu'))
 
     model = checkpoint['net']
     # epoch = checkpoint['epoch']
@@ -153,27 +156,37 @@ def compareAbstained(combined_labels):
     all_abstained = combined_labels[:,trained_abstained]
     print("total abstained: %i"%(len(all_abstained[0,:])))
     print(all_abstained)
-    # print(combined_labels[:][2])
+    print(combined_labels[:][2])
     correctly_abstained = all_abstained[:,all_abstained[0,:] != all_abstained[1,:]]
     wrongly_abstained = all_abstained[:,all_abstained[0,:] == all_abstained[1,:]]
     print("correctly abstained: %i"%(len(correctly_abstained[0,:])))
     print(correctly_abstained)  
     print("wrongly abstained: %i"%(len(wrongly_abstained[0,:])))
     print(wrongly_abstained)
-    return all_abstained, correctly_abstained, wrongly_abstained    
+    return all_abstained, correctly_abstained, wrongly_abstained   
 
-net , file_name = getNetwork(args) 
-model = loadModel()
-train_predicted, train_targets = evalDataset(trainloader)
-#test_predicted = evalDataset(testloader)
-_, orig_labels = evalDataset(trainloader_no_noise)
 
-combined_labels_arr = np.array([orig_labels, train_targets, train_predicted])
-print(combined_labels_arr)
+def getSavedNetworks(checkpointPath):
+   return [checkpointPath + '/' + f for f in listdir(checkpointPath) if isfile(join(checkpointPath, f))]
 
-compareLabels(train_predicted, train_targets)
-label_diff, diff_index, noise_diff_labels, orig_diff_labels = compareLabels(train_targets, orig_labels)
-all_abstained, correctly_abstained, wrongly_abstained = compareAbstained(combined_labels_arr)
+
+for checkpoint in getSavedNetworks(args.checkpoint_path):
+    net , file_name = getNetwork(args) 
+    model = loadModel(checkpoint)
+    train_predicted, train_targets = evalDataset(trainloader)
+    #test_predicted = evalDataset(testloader)
+    _, orig_labels = evalDataset(trainloader_no_noise)
+
+    #orig_labels =       np.array([1,23,13,14,15,4,3,2,11,2,3,3,2,2,1,2,3,14])
+    #train_targets =     np.array([1,20,3,4,4,4,3,2,1,2,3,3,2,2,2,2,2,14])
+    #train_predicted =   np.array([1,24,3,4,24,4,3,2,24,24,3,3,24,2,23,2,24,14])
+
+    combined_labels_arr = np.array([orig_labels, train_targets, train_predicted])
+    print(combined_labels_arr)
+
+    compareLabels(train_predicted, train_targets)
+    label_diff, diff_index, noise_diff_labels, orig_diff_labels = compareLabels(train_targets, orig_labels)
+    all_abstained, correctly_abstained, wrongly_abstained = compareAbstained(combined_labels_arr)
 
 
 
