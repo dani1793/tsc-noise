@@ -59,10 +59,13 @@ class UCRArchiveNoisyVal(data.Dataset):
             dataset_path = archiveRoot + '/' + dataset[0]
             if iteration != 0:
                 dataset_path = archiveRoot + '/' + dataset[0] + '/val_noise_dataset/iter-' + str(iteration)
-            print('fetching data from path %s'%(dataset_path))
+            
             if noise == 0:
+                dataset_path = archiveRoot + '/' + dataset[0] + '/val_noise_dataset'
+                print('fetching data from path %s'%(dataset_path))
                 data = pd.read_csv(dataset_path + '/' + dataset[0] + '_' + datasetType + '.tsv', sep='\t', header=None)
             else:
+                print('fetching data from path %s'%(dataset_path))
                 data = pd.read_csv(dataset_path + '/' + dataset[0] + '_' + str(noise) + '_' + datasetType + '.tsv', sep='\t', header=None)
             self.labels = torch.Tensor(data.values[:, 0] - 1).long()
             self.targets = self.labels
