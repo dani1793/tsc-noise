@@ -13,12 +13,19 @@ import matplotlib.pyplot as plt
 import os
 
 
-dataset = "ai_crop" # "crop"
+dataset =  "crop" # "ai_crop"
 exp2lstmBase = [
     "2-lstm-crop-noise-0.3-epoch-5000-dac-learning-epoch-40-lr-0.001-iter2", 
     "2-lstm-crop-noise-0.5-epoch-5000-dac-learning-epoch-100-lr-0.001-iter2",
     "2-lstm-crop-noise-0.75-epoch-5000-dac-learning-epoch-400-lr-0.001-iter3"
     ]
+exp2lstmBaseWithNoisyVal = [
+    "2-lstm-crop-epoch-5000-dac-learning-epoch-40-lr-0.001",
+    "2-lstm-crop-noise-0.3-epoch-5000-dac-learning-epoch-40-lr-0.001-noisy_val-iter2",
+    "2-lstm-crop-noise-0.5-epoch-5000-dac-learning-epoch-100-lr-0.001-noisy_val-iter2",
+    "2-lstm-crop-noise-0.75-epoch-5000-dac-learning-epoch-400-lr-0.001-noisy_val-iter2"
+    ]
+
 
 exp2inceptionBase = [
     "inception-simple-crop-noise-0.3-epoch-300-dac-learning-epoch-50-lr-0.1-iter2",
@@ -72,6 +79,23 @@ def getTrainF1WithoutAbstainedDataForExp(experiment):
     valF1Score = abs_file_path + '/' + experiment + '.train-f1score-without-abstained.npy'
     return valF1Score
 
+def getTrainAbstained(experiment):
+    rootPath = 'results/' + dataset + '/' + experiment + '/abstained'
+    script_dir = os.path.dirname(os.path.realpath('__file__'))
+    abs_file_path = os.path.join(script_dir, rootPath)
+    trainAbstained = abs_file_path + '/' + experiment + '.train-abstained.npy'
+    return trainAbstained 
+
+
+def getValAbstained(experiment):
+    rootPath = 'results/' + dataset + '/' + experiment + '/abstained'
+    script_dir = os.path.dirname(os.path.realpath('__file__'))
+    abs_file_path = os.path.join(script_dir, rootPath)
+    valAbstained = abs_file_path + '/' + experiment + '.val-abstained.npy'
+    return valAbstained 
+
+
+
 def getMovingAverageOfSeries(series, window):
     numbers_series = pd.Series(series)
     windows = numbers_series.rolling(window)
@@ -90,7 +114,7 @@ def generatePlot(experiments, plotType, architectureType, fileName):
     for (exp, noiseLevel,color) in experiments:
         file = np.load(exp,  allow_pickle=True)
         if noiseLevel == 0:
-            plt.plot(getMovingAverageOfSeries(file, windowSize), color)
+            plt.plot(getMovingAverageOfSeries(file, windowSize), color, label = '%s'%(str(noiseLevel)))
         else:
             plt.plot(getMovingAverageOfSeries(file, windowSize), color, label = '%s'%(str(noiseLevel)))
             plt.legend(loc='upper right', fontsize='x-small')
@@ -99,31 +123,33 @@ def generatePlot(experiments, plotType, architectureType, fileName):
     plt.xlabel('Epochs')
     plt.ylabel(plotType)
 
-    plt.savefig('results/plots/experiment-3-ma15-epoch-800-%s-%s.jpg'%(architectureType, fileName), dpi = 1080, format='jpeg')
+    plt.savefig('results/plots/experiment-2-noisy_val-3%s-%s.jpg'%(architectureType, fileName), dpi = 1080, format='jpeg')
     plt.close()
 
-#generatePlot(zip([getValLossDataForExp(exp) for exp in exp2lstmBase], [0.3,0.5,0.75], ['g-','r--','b-.']), 'Loss', "lstm", 'loss')
-#generatePlot(zip([getValF1DataForExp(exp) for exp in exp2lstmBase], [0.3,0.5,0.75], ['g-','r--','b-.']), 'F1 score', "lstm", 'f1score')
-#generatePlot(zip([getValF1WithoutAbstainedDataForExp(exp) for exp in exp2lstmBaseWithoutAbstension], [0.3,0.5,0.75], ['g-','r--','b-.']), 'F1 score pruned', "lstm", "f1score-without-abstained")
-#generatePlot(zip([getTrainF1WithoutAbstainedDataForExp(exp) for exp in exp2lstmBaseWithoutAbstension], [0.3,0.5,0.75], ['g-','r--','b-.']), 'F1 score pruned', "lstm", 'train-f1score-without-abstained')
+# Experiment 2 graph plots
+generatePlot(zip([getValLossDataForExp(exp) for exp in exp2lstmBaseWithNoisyVal], [0.0, 0.3,0.5, 0.75], ['m.','g-','r--','b-.']), 'Loss', "lstm", 'loss')
+generatePlot(zip([getValF1DataForExp(exp) for exp in exp2lstmBaseWithNoisyVal], [0.0, 0.3,0.5, 0.75], ['m.','g-','r--','b-.']), 'F1 score', "lstm", 'f1score')
+generatePlot(zip([getValF1WithoutAbstainedDataForExp(exp) for exp in exp2lstmBaseWithNoisyVal], [0.0, 0.3,0.5, 0.75], ['m.','g-','r--','b-.']), 'F1 score pruned', "lstm", "f1score-without-abstained")
+generatePlot(zip([getTrainF1WithoutAbstainedDataForExp(exp) for exp in exp2lstmBaseWithNoisyVal], [0.0, 0.3,0.5, 0.75], ['m.','g-','r--','b-.']), 'F1 score pruned', "lstm", 'train-f1score-without-abstained')
+generatePlot(zip([getTrainAbstained(exp) for exp in exp2lstmBaseWithNoisyVal], [0.0, 0.3,0.5, 0.75], ['m.','g-','r--','b-.']), 'Abstained Sampled', "lstm", 'train-abstained-samples')
+generatePlot(zip([getValAbstained(exp) for exp in exp2lstmBaseWithNoisyVal], [0.0, 0.3,0.5, 0.75], ['m.','g-','r--','b-.']), 'Abstained Sampled', "lstm", 'val-abstained-samples')
 
 #generatePlot(zip([getValLossDataForExp(exp) for exp in exp2inceptionBase], [0.3,0.5,0.75], ['g-','r--','b-.']), 'Loss', "inception", 'loss')
 #generatePlot(zip([getValF1DataForExp(exp) for exp in exp2inceptionBase], [0.3,0.5,0.75], ['g-','r--','b-.']), 'F1 score', "inception", 'f1score')
 #generatePlot(zip([getValF1WithoutAbstainedDataForExp(exp) for exp in exp2inceptionBase], [0.3,0.5,0.75], ['g-','r--','b-.']), 'F1 score Pruned', "inception", 'f1score-without-abstained')
 #generatePlot(zip([getTrainF1WithoutAbstainedDataForExp(exp) for exp in exp2inceptionBase], [0.3,0.5,0.75], ['g-','r--','b-.']), 'F1 score pruned', "inception", 'train-f1score-without-abstained')
 
-
+# Experiment 3 graph plots
 #generatePlot(zip([getValLossDataForExp(exp3lstmBase[0])], [0], ['g-','r--','b-.']), 'Loss', "lstm", 'loss')
 #generatePlot(zip([getValF1DataForExp(exp3lstmBase[0])], [0], ['g-','r--','b-.']), 'F1 score', "lstm", 'f1score')
 #generatePlot(zip([getValF1WithoutAbstainedDataForExp(exp3lstmBase[0]),getTrainF1WithoutAbstainedDataForExp(exp3lstmBase[0])], ["F1score Val", "F1score Train"], ['g-','b-.']), 'F1 score pruned', "lstm", "train-val-f1score-without-abstained")
 #generatePlot(zip([getTrainF1WithoutAbstainedDataForExp(exp) for exp in exp3inception], [], ['g-','r--','b-.']), 'F1 score pruned', "inception", 'train-f1score-without-abstained')
 
-
-
-generatePlot(zip([getValLossDataForExp(exp3inception[0])], [0], ['g-','r--','b-.']), 'Loss', "inception", 'loss')
-generatePlot(zip([getValF1DataForExp(exp3inception[0])], [0], ['g-','r--','b-.']), 'F1 score', "inception", 'f1score')
-generatePlot(zip([getValF1WithoutAbstainedDataForExp(exp3inception[0]),getTrainF1WithoutAbstainedDataForExp(exp3inception[0])], ["F1score Val", "F1score Train"], ['g-','b-.']), 'F1 score pruned', "inception", "train-val-f1score-without-abstained")
+#generatePlot(zip([getValLossDataForExp(exp3inception[0])], [0], ['g-','r--','b-.']), 'Loss', "inception", 'loss')
+#generatePlot(zip([getValF1DataForExp(exp3inception[0])], [0], ['g-','r--','b-.']), 'F1 score', "inception", 'f1score')
+#generatePlot(zip([getValF1WithoutAbstainedDataForExp(exp3inception[0]),getTrainF1WithoutAbstainedDataForExp(exp3inception[0])], ["F1score Val", "F1score Train"], ['g-','b-.']), 'F1 score pruned', "inception", "train-val-f1score-without-abstained")
 #generatePlot(zip([getTrainF1WithoutAbstainedDataForExp(exp) for exp in exp3inception], [], ['g-','r--','b-.']), 'F1 score pruned', "inception", 'train-f1score-without-abstained')
+
 
 
 
