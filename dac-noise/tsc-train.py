@@ -23,6 +23,9 @@ parser.add_argument('--lr', default=0.1, type=float, help='learning_rate')
 parser.add_argument('--dropout', default=0.2, type=float, help='dropout_rate')
 parser.add_argument('--datadir',  type=str, required=True, help='data directory')
 
+parser.add_argument('--load_checkpoint',  type=str, help='load checkpoint model')
+parser.add_argument('--load_epochs',  type=int, help='load checkpoint model epochs')
+
 
 parser.add_argument('--dataset', default='mnist', type=str, help='dataset = [mnist/cifar10/cifar100/stl10-labeled/stl10-c/tin200/fashion]')
 
@@ -298,21 +301,45 @@ def getNetwork(args):
 
 	return net.to(device), file_name
 
+def loadModel(savedModelPath):
+
+    if torch.cuda.is_available():
+        checkpoint = torch.load(savedModelPath)
+    else:
+        checkpoint = torch.load(savedModelPath, map_location=torch.device('cpu'))
+	
+    if args.net_type == 'tsc-lstm':
+        file_name = 'tsc-lstm'
+    else:
+        file_name = 'inception-simple'
+
+    model = checkpoint['net']
+    # epoch = checkpoint['epoch']
+    # loss = checkpoint['loss']
+
+    return model, file_name
+
 
 print('\n[Phase 2] : Model setup')
-print('| Building net')
-if args.net_type is None:
-    print("Using Default conv net")
-    file_name = 'conv_net'
-    if args.loss_fn is None: #no abstention. use the actual number of classes
-        net = cnn.ConvNet(num_classes,args.dropout)
-    else: #use extra class for abstention 
-            net = cnn.ConvNet(num_classes+1,args.dropout)
+if args.load_checkpoint:
+	net, file_name = loadModel(args.load_checkpoint)
+	if args.load_epochs:
+		start_epoch = args.load_epochs
+	sys.stdout.flush()
 else:
-    print('| Building net type [' + args.net_type + ']...')
-    net, file_name = getNetwork(args)
-    #net.apply(conv_init)
-    sys.stdout.flush()
+	print('| Building net')
+	if args.net_type is None:
+		print("Using Default conv net")
+		file_name = 'conv_net'
+		if args.loss_fn is None: #no abstention. use the actual number of classes
+			net = cnn.ConvNet(num_classes,args.dropout)
+		else: #use extra class for abstention 
+				net = cnn.ConvNet(num_classes+1,args.dropout)
+	else:
+		print('| Building net type [' + args.net_type + ']...')
+		net, file_name = getNetwork(args)
+		#net.apply(conv_init)
+		sys.stdout.flush()
 
 
 #set up loss function and CUDA-fy if needed
@@ -444,9 +471,9 @@ def train_and_save_scores(epoch):
 	    	args.lr = 0.001
 
 #optimizer = optim.SGD(net.parameters(), lr=cf.learning_rate(args.lr, epoch), momentum=0.9, 
-	    optimizer = optim.SGD(net.parameters(), lr=args.lr, momentum=0.9, 
-	    	nesterov=args.nesterov, weight_decay=5e-4)
-	    print('\n=> Training Epoch #%d, LR=%.4f' %(epoch, args.lr))
+	    #optimizer = optim.SGD(net.parameters(), lr=args.lr, momentum=0.9, 
+	    #	nesterov=args.nesterov, weight_decay=5e-4)
+	    #print('\n=> Training Epoch #%d, LR=%.4f' %(epoch, args.lr))
  
 
 	else: #cifar 10/100/stl-10/tin200/fashion
@@ -716,7 +743,6 @@ def test(epoch):
 					torch.save(state, save_point+file_name+'_expt_name_'+str(expt_name)+'.t7')
 		if acc > best_acc:
 			best_acc = acc
-
 
 def createDir(dirName):
     try:
