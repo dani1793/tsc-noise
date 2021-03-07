@@ -223,8 +223,11 @@ def get_data(args,):
         
 	elif args.dataset == 'ai_crop':
         
-		trainset = crop_tsc_balanced_2015.CropTscBalanced2015(args.datadir, args.dataset,  9, 8, iteration= args.iteration, datasetType = 'TRAIN',transform=None)
-		testset = crop_tsc_balanced_2015.CropTscBalanced2015(args.datadir, args.dataset,  9, 8, iteration= args.iteration, datasetType = 'VAL',transform=None)
+		#trainset = crop_tsc_balanced_2015.CropTscBalanced2015(args.datadir, args.dataset,  9, 8, iteration= args.iteration, datasetType = 'TRAIN',transform=None)
+		#testset = crop_tsc_balanced_2015.CropTscBalanced2015(args.datadir, args.dataset,  9, 8, iteration= args.iteration, datasetType = 'VAL',transform=None)
+
+		trainset = crop_tsc_balanced_2015.CropTscBalanced2015NoisyVal(args.datadir, args.dataset,  9, 8, iteration= args.iteration, datasetType = 'TRAIN',transform=None)
+		testset = crop_tsc_balanced_2015.CropTscBalanced2015NoisyVal(args.datadir, args.dataset,  9, 8, iteration= args.iteration, datasetType = 'VAL',transform=None)
         
 		num_classes = 2 
 		series_length = 8
