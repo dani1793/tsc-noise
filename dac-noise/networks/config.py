@@ -28,16 +28,18 @@ def learning_rate(init, epoch):
    # print("keeping it constant thoughout the training process");
   # print("using config steps for inceptiom time")
    if (epoch > 300):
-       optim_factor = 5;
+       optim_factor = 6;
    elif (epoch > 280):
-       optim_factor = 5;
+       optim_factor = 6;
    elif (epoch > 250):
-       optim_factor = 5;
+       optim_factor = 6;
    elif (epoch > 220):
-       optim_factor = 5;
+       optim_factor = 6;
    elif (epoch > 200):
-       optim_factor = 5;
+       optim_factor = 6;
    elif (epoch > 150):
+       optim_factor = 6;
+   elif (epoch > 100):
        optim_factor = 5;
    elif (epoch > 80):
        optim_factor = 3;
@@ -53,7 +55,7 @@ def learning_rate(init, epoch):
 
     
    
-   '''   #print("changing learning rate for lstm");
+   #print("changing learning rate for lstm");
 # FOR LSTM UCR CROP
 
    if (epoch > 3000):
@@ -79,14 +81,16 @@ def learning_rate(init, epoch):
    elif(epoch > 120):
        optim_factor = 4 #3
    elif(epoch > 80):
+       optim_factor = 3 #2
+   elif(epoch > 60):
        optim_factor = 2 #2
    elif(epoch > 45):
        optim_factor = 1 #2
     #elif(epoch > 160):
-    #    optim_factor = 1'''
+    #    optim_factor = 1
   
-   #return init*math.pow(0.2, optim_factor)
-   return init*math.pow(0.5, optim_factor) # for inception Time crop
+   return init*math.pow(0.2, optim_factor)
+   #return init*math.pow(0.5, optim_factor) # for inception Time crop
    #return init*math.pow(0.2, optim_factor) # for inception Time crop      
 
 def get_hms(seconds):
